@@ -7,12 +7,6 @@ package puankareii;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.JPanel;
-/*import java.awt.Font;
-import java.awt.Frame;
-import java.awt.Graphics;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-*/
 /**
  *
  * @author user
@@ -28,6 +22,7 @@ public class PuankareII extends Frame{
         //g.drawString("Hello, XXI century World!", 20, 100);
         //g.drawLine(10, 10, 20, 30);
         g.drawArc(30, 30, 660, 660, 45, 200);
+        g.fillArc(300, 300, 4, 4, 0, 360);
     }
 
     public static void main(String[] args) {
