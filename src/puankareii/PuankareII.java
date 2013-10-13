@@ -34,7 +34,7 @@ public class PuankareII extends Frame{
         Frame f = new PuankareII("Здравствуй, мир XXI века!");
         NewJPanel panel = new NewJPanel();
         panel.setSize(300, 300);
-        f.setSize(600, 600);
+        f.setSize(700, 700);
         f.setVisible(true);
         f.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent ev) {
