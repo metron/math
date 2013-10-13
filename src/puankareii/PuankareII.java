@@ -32,8 +32,8 @@ public class PuankareII extends Frame{
 
     public static void main(String[] args) {
         Frame f = new PuankareII("Разбиение Л2 на n-угольники по r-сходящиеся.");
-        NewJPanel panel = new NewJPanel();
-        panel.setSize(300, 300);
+        //NewJPanel panel = new NewJPanel();
+        //panel.setSize(300, 300);
         f.setSize(700, 700);
         f.setVisible(true);
         f.addWindowListener(new WindowAdapter() {
