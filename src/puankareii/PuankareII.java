@@ -31,7 +31,7 @@ public class PuankareII extends Frame{
     }
 
     public static void main(String[] args) {
-        Frame f = new PuankareII("Здравствуй, мир XXI века!");
+        Frame f = new PuankareII("Разбиение Л2 на n-угольники по r-сходящиеся.");
         NewJPanel panel = new NewJPanel();
         panel.setSize(300, 300);
         f.setSize(700, 700);
