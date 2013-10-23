@@ -10,6 +10,10 @@ textarea {
     color: #222;
 }
 
+#smile {
+	border: 4px double black;
+}
+
 body {
     font-size: 1em;
     line-height: 1.4;
