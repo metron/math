@@ -18,38 +18,41 @@
 		<script>
 			window.onload = function() {
 				$("#draw").on("click", function() {
+					var R1 = 330; //радиус основной окружности, окружности интерпретации (инверсии)
+					var Ox1 = 350;//начало координат по х, центр окружности инверсии
+					var Oy1 = 350;//начало координат по у
+					var n = $("#n").val();//получаем значение количества углов многоугольника
+					var r = $("#r").val();//получаем значение количества схождений многоугольников в вершинах
+					var a = Math.sin(Math.PI / r);//вычисляем синус альфа
+					var b = Math.cos(Math.PI / n);//вычисляем косинус бетта
+					var R2 = R1 / Math.sqrt(b*b - a*a);//вычисляем радиус окружности ортогональной окружности инверсии и пересекающей оси под нужными углами альфа и бетта
+					var Ox2 = Ox1 + R2 * b;//вычисляем центр ортогональной окружности по х
+					var Oy2 = Oy1 + R2 * Math.cos(Math.PI / r);//вычисляем центр ортогональной окружности по у
+					
+					
 					var drawingCanvas = document.getElementById('smile');
 					if (drawingCanvas && drawingCanvas.getContext) {
 						var context = drawingCanvas.getContext('2d');
-						// Рисуем окружность 
+						// Рисуем окружность (плоскость Лобачевского).
 						context.strokeStyle = "#000";
-						context.fillStyle = "#fc0";
+						context.fillStyle = "#f0f0f0";
 						context.beginPath();
-						context.arc(100, 100, 50, 0, Math.PI * 2, true);
+						context.arc(Ox1, Oy1, R1, 0, Math.PI * 2, true);
 						context.closePath();
 						context.stroke();
 						context.fill();
-						// Рисуем левый глаз 
-						context.fillStyle = "#fff";
+						
+						//рисуем ортогональную окружность
 						context.beginPath();
-						context.arc(84, 90, 8, 0, Math.PI * 2, true);
-						context.closePath();
+						context.arc(Ox2, Oy2, R2, 0, Math.PI * 2, true);
 						context.stroke();
-						context.fill();
-						// Рисуем правый глаз 
-						context.beginPath();
-						context.arc(116, 90, 8, 0, Math.PI * 2, true);
-						context.closePath();
+						
+						//рисуем оси координат
+						context.moveTo(Ox1, Oy1 - R1);
+						context.lineTo(Ox1, Oy1 + R1);
+						context.moveTo(Ox1 - R1, Oy1);
+						context.lineTo(Ox1 + R1, Oy1);
 						context.stroke();
-						context.fill();
-						// Рисуем рот
-						context.beginPath();
-						context.moveTo(70, 115);
-						context.quadraticCurveTo(100, 130, 130, 115);
-						context.quadraticCurveTo(100, 150, 70, 115);
-						context.closePath();
-						context.stroke();
-						context.fill();
 					}
 				});
 			}
@@ -69,14 +72,6 @@
         <script src="js/plugins.js"></script>
         <script src="js/main.js"></script>
 
-        <script>
-			var _gaq = [['_setAccount', 'UA-XXXXX-X'], ['_trackPageview']];
-			(function(d, t) {
-				var g = d.createElement(t), s = d.getElementsByTagName(t)[0];
-				g.src = '//www.google-analytics.com/ga.js';
-				s.parentNode.insertBefore(g, s)
-			}(document, 'script'));
-        </script>
 		<form>
 			<input style="width: 30px;" type="text" value="7" placeholder="Укажите количество углов" id="n">
 			<label>- угольники, сходящиеся по </label>
