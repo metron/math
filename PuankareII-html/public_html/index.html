@@ -16,45 +16,57 @@
         <script src="js/vendor/modernizr-2.6.2.min.js"></script>
 
         <script>
-
+            R1 = 330; //радиус основной окружности, окружности интерпретации (инверсии)
+            Ox1 = 350;//начало координат по х, центр окружности инверсии
+            Oy1 = 350;//начало координат по у
+            n = 7;//начальное значение количества углов многоугольника
+            r = 3;//начальное значение количества схождений многоугольников в вершинах
+            R2 = 0;//начальное значение радиуса окружности ортогональной окружности инверсии и пересекающей оси под нужными углами альфа и бетта
+            Ox2 = 0;//начальное значение центра ортогональной окружности по х
+            Oy2 = 0;//начальное значение координаты центра окружности инверсии по у
+            
+            function calcCircule2(){
+                a = Math.sin(Math.PI / r);//вычисляем синус альфа
+                b = Math.cos(Math.PI / n);//вычисляем косинус бетта
+                R2 = R1 / Math.sqrt(b * b - a * a);//вычисляем радиус окружности ортогональной окружности инверсии и пересекающей оси под нужными углами альфа и бетта
+                Ox2 = Ox1 + R2 * b;//вычисляем центр ортогональной окружности по х
+                Oy2 = Oy1 + R2 * Math.cos(Math.PI / r);//вычисляем центр ортогональной окружности по у
+            }
+            
             window.onload = function() {
+
+                //создаём объект canvas
+                drawingCanvas = document.getElementById('smile');
+                if (drawingCanvas && drawingCanvas.getContext) {
+                    ris = drawingCanvas.getContext('2d');
+                }
+
+                // Рисуем окружность (плоскость Лобачевского).
+                ris.strokeStyle = "#000";
+                ris.fillStyle = "#f0f0f0";
+                ris.beginPath();
+                ris.arc(Ox1, Oy1, R1, 0, Math.PI * 2, true);
+                ris.closePath();
+                ris.stroke();
+                ris.fill();
+
+                //рисуем оси координат
+                ris.moveTo(Ox1, Oy1 - R1);
+                ris.lineTo(Ox1, Oy1 + R1);
+                ris.moveTo(Ox1 - R1, Oy1);
+                ris.lineTo(Ox1 + R1, Oy1);
+                ris.stroke();
+                
+                //привязываем обработчик нажатия на кнопку
                 $("#draw").on("click", function() {
-                    var R1 = 330; //радиус основной окружности, окружности интерпретации (инверсии)
-                    var Ox1 = 350;//начало координат по х, центр окружности инверсии
-                    var Oy1 = 350;//начало координат по у
-                    var n = $("#n").val();//получаем значение количества углов многоугольника
-                    var r = $("#r").val();//получаем значение количества схождений многоугольников в вершинах
-                    var a = Math.sin(Math.PI / r);//вычисляем синус альфа
-                    var b = Math.cos(Math.PI / n);//вычисляем косинус бетта
-                    var R2 = R1 / Math.sqrt(b * b - a * a);//вычисляем радиус окружности ортогональной окружности инверсии и пересекающей оси под нужными углами альфа и бетта
-                    var Ox2 = Ox1 + R2 * b;//вычисляем центр ортогональной окружности по х
-                    var Oy2 = Oy1 + R2 * Math.cos(Math.PI / r);//вычисляем центр ортогональной окружности по у
-
-
-                    var drawingCanvas = document.getElementById('smile');
-                    if (drawingCanvas && drawingCanvas.getContext) {
-                        var context = drawingCanvas.getContext('2d');
-                        // Рисуем окружность (плоскость Лобачевского).
-                        context.strokeStyle = "#000";
-                        context.fillStyle = "#f0f0f0";
-                        context.beginPath();
-                        context.arc(Ox1, Oy1, R1, 0, Math.PI * 2, true);
-                        context.closePath();
-                        context.stroke();
-                        context.fill();
-
-                        //рисуем ортогональную окружность
-                        context.beginPath();
-                        context.arc(Ox2, Oy2, R2, 0, Math.PI * 2, true);
-                        context.stroke();
-
-                        //рисуем оси координат
-                        context.moveTo(Ox1, Oy1 - R1);
-                        context.lineTo(Ox1, Oy1 + R1);
-                        context.moveTo(Ox1 - R1, Oy1);
-                        context.lineTo(Ox1 + R1, Oy1);
-                        context.stroke();
-                    }
+                    n = $("#n").val();//получаем значение количества углов многоугольника
+                    r = $("#r").val();//получаем значение количества схождений многоугольников в вершинах
+                    calcCircule2();
+                    
+                    //рисуем ортогональную окружность
+                    ris.beginPath();
+                    ris.arc(Ox2, Oy2, R2, 0, Math.PI * 2, true);
+                    ris.stroke();
                 });
             }
         </script>
