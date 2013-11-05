@@ -542,3 +542,8 @@ FileETag None
 # <IfModule mod_headers.c>
 #    Header set Connection Keep-Alive
 # </IfModule>
+
+<IfModule mod_rewrite.c>
+	RewriteEngine On
+	RewriteRule ^(.*)\.(v[0-9]+)?\.(css|js)$ $1.$3 [QSA,L]
+</IfModule>
