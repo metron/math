@@ -64,7 +64,7 @@ window.onload = function() {
 		calcCircule2();//вычисляем параметры окружности инверсии и рисуем её
 		beginPoints();//вычисляем координаты начальных точек
 		
-		invEdge(0, 0, newEdge);//отражаем нулевую грань, в нулевом ребре => создаём и рисуем новую грань
+		invEdge(0, 1, newEdge);//отражаем нулевую грань, в нулевом ребре => создаём и рисуем новую грань
 		newEdge++;
 	});
 };
@@ -142,6 +142,7 @@ function draw() {//функция выводит на экран все точк
 function drawPoint(num) {//функция выводит очередную точку на экран
 	ris.fillStyle = colors[al[0]["color"][num]];
 	ris.strokeStyle = colors[al[0]["color"][num]];
+	if (details) ris.fillText(num.toString(), al[0]["x"][num] + 2, al[0]["y"][num] - 2);
 	ris.beginPath();
 	ris.arc(al[0]["x"][num], al[0]["y"][num], 1.5, 0, Math.PI * 2);
 	ris.closePath();
@@ -340,6 +341,8 @@ function drawRib(num) {
 	var Ay = al[0]["y"][al[1]["p1"][num]];
 	var Bx = al[0]["x"][al[1]["p2"][num]];
 	var By = al[0]["y"][al[1]["p2"][num]];
+	console.log((Bx-Ax)*Ox1 + (By-Ay)*Oy1 + (Ax-Bx)*Bx + (Ay-By)*By);
+	if (details) ris.fillText(num.toString(), (Ax+Bx)/2 + 2, (Ay+By)/2 - 2);
 	var lyamdaA = Math.pow(R1, 2) / (Math.pow(Ox1 - Ax, 2) + Math.pow(Oy1 - Ay, 2));
 	var Aix = Ox1 + (Ax - Ox1) * lyamdaA;
 	var Aiy = Oy1 + (Ay - Oy1) * lyamdaA;
@@ -360,7 +363,7 @@ function drawRib(num) {
 	var Oy2 = (c1 * a2 / a1 - c2) / (b2 - b1 * a2 / a1);
 	var R2 = Math.sqrt(Math.pow(Ax - Ox2, 2) + Math.pow(Ay - Oy2, 2));
 	var alfa = 2 * Math.asin(Math.sqrt(Math.pow(Ax - Bx, 2) + Math.pow(Ay - By, 2)) / (2 * R2));
-	var betta = Math.sign(Ay - Oy2) * 2 * Math.asin(Math.sqrt(Math.pow(Ax - Ox2 - R2, 2) + Math.pow(Ay - Oy2, 2)) / (2 * R2));
+	var betta = ((Ay - Oy2) / Math.abs(Ay - Oy2)) * 2 * Math.asin(Math.sqrt(Math.pow(Ax - Ox2 - R2, 2) + Math.pow(Ay - Oy2, 2)) / (2 * R2));
 
 	//рисуем дугу
 	ris.beginPath();
@@ -415,9 +418,9 @@ function invEdge(curE, ribNum, newE) {
 	setCircleMirrorByTwoPoints(al[1]["p1"][al[2][curE][ribNum]], al[1]["p2"][al[2][curE][ribNum]]);
 	
 	firstP = newP;//запоминаем первую вершину
-	for (var p = 0; p < n; p++) {//перебираем начала рёбер текущей грани от нулевой до крайней
+	for (var p = n - 1; p >= 0; p--) {//перебираем начала рёбер текущей грани от нулевой до крайней
 		i = al[2][curE][p];//получаем номер очередного ребра
-		invInCircleMirror(al[1]["p1"][i], newP);//инверсия первой точки ребра
+		invInCircleMirror(al[1]["p1"][i], newP);//инверсия точки ребра
 		//рисуем новую вершину
 		drawPoint(newP);
 		newP++;
