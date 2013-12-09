@@ -63,6 +63,9 @@ window.onload = function() {
 		
 		calcCircule2();//вычисляем параметры окружности инверсии и рисуем её
 		beginPoints();//вычисляем координаты начальных точек
+		
+		invEdge(0, 0, newEdge);//отражаем нулевую грань, в нулевом ребре => создаём и рисуем новую грань
+		newEdge++;
 	});
 };
 
@@ -117,10 +120,11 @@ function calcCircule2() {//вычисляем и рисуем ортогонал
 	Oy2 = Oy1 + R2 * Math.cos(Math.PI / r);//вычисляем центр ортогональной окружности по у
 
 	//рисуем ортогональную окружность
-
-	ris.beginPath();
-	ris.arc(Ox2, Oy2, R2, 0, Math.PI * 2, true);
-	ris.stroke();
+	if (details){
+		ris.beginPath();
+		ris.arc(Ox2, Oy2, R2, 0, Math.PI * 2, true);
+		ris.stroke();
+	}
 }
 
 function draw() {//функция выводит на экран все точки
@@ -356,7 +360,7 @@ function drawRib(num) {
 	var Oy2 = (c1 * a2 / a1 - c2) / (b2 - b1 * a2 / a1);
 	var R2 = Math.sqrt(Math.pow(Ax - Ox2, 2) + Math.pow(Ay - Oy2, 2));
 	var alfa = 2 * Math.asin(Math.sqrt(Math.pow(Ax - Bx, 2) + Math.pow(Ay - By, 2)) / (2 * R2));
-	var betta = Math.sign(Oy1 - Oy2) * 2 * Math.asin(Math.sqrt(Math.pow(Ax - Ox2 - R2, 2) + Math.pow(Ay - Oy2, 2)) / (2 * R2));
+	var betta = Math.sign(Ay - Oy2) * 2 * Math.asin(Math.sqrt(Math.pow(Ax - Ox2 - R2, 2) + Math.pow(Ay - Oy2, 2)) / (2 * R2));
 
 	//рисуем дугу
 	ris.beginPath();
@@ -364,24 +368,110 @@ function drawRib(num) {
 	ris.stroke();
 }
 
-
 /*
- * Формируем грань многоугольника, путём размножения его вершин.
+ * Формируем нулевую грань многоугольника, путём размножения его вершин.
  */
 function makeEdge() {
-	for (i = 0; i < 6; i++) {
+	al[2][newEdge] = [];
+	for (i = 0; i < n - 2; i++) {
 		//создаём новую точку, очередную вершину многоугольника
 		setLineMirror(al[0]["x"][al[1]["p2"][i]], al[0]["y"][al[1]["p2"][i]]);
 		//как инверсию первой вершины ребра, относитлеьно прямой проведённой через вторую вершину ребра и центр интерпретации
 		invInLineMirror(al[1]["p1"][i], newP);
+		
+		//запоминаем ребро, как две точки
 		al[1]["p1"][newRib] = al[1]["p2"][i];
 		al[1]["p2"][newRib] = newP;
 
+		//запоминаем очередное ребро в нулевой грани
+		al[2][newEdge].push(i);
+
+		//рисуем новое ребро
+		drawRib(newRib);
+		newRib++;
 		//рисуем новую вершину
 		drawPoint(newP);
 		newP++;
+	}
+	
+	//крайняя грань формируется из первой и крайней вершины
+	al[1]["p1"][newRib] = newP - 1;
+	al[1]["p2"][newRib] = al[1]["p1"][0];
+	//запоминаем очередное ребро в нулевой грани
+	al[2][newEdge].push(i);
+	//запоминаем очередное ребро в нулевой грани
+	al[2][newEdge].push(newRib);
+	//рисуем крайнее ребро
+	drawRib(newRib);
+	newRib++;
+}
+
+/*
+ * Формируем нулевую грань многоугольника, путём размножения его вершин.
+ */
+function invEdge(curE, ribNum, newE) {
+	al[2][newE] = [];
+	//устанавливаем зеркало в ребре ribNum данного многоугольника (данной грани) curE
+	setCircleMirrorByTwoPoints(al[1]["p1"][al[2][curE][ribNum]], al[1]["p2"][al[2][curE][ribNum]]);
+	
+	firstP = newP;//запоминаем первую вершину
+	for (var p = 0; p < n; p++) {//перебираем начала рёбер текущей грани от нулевой до крайней
+		i = al[2][curE][p];//получаем номер очередного ребра
+		invInCircleMirror(al[1]["p1"][i], newP);//инверсия первой точки ребра
+		//рисуем новую вершину
+		drawPoint(newP);
+		newP++;
+	}
+	
+	for (p = firstP + 1; p < newP; p++){//перебираем все вершины новой грани и запоминаем рёбра, как две вершины каждое ребро
+		al[1]["p1"][newRib] = p - 1;
+		al[1]["p2"][newRib] = p;
+		
+		//запоминаем очередное ребро в нулевой грани
+		al[2][newE].push(newRib);
+
 		//рисуем новое ребро
 		drawRib(newRib);
 		newRib++;
 	}
+	al[1]["p1"][newRib] = p - 1;
+	al[1]["p2"][newRib] = firstP;
+
+	//запоминаем очередное ребро в нулевой грани
+	al[2][newE].push(newRib);
+
+	//рисуем новое ребро
+	drawRib(newRib);
+	newRib++;
+}
+
+/*
+ * Находим зеркало-дугу, по двум точкам.
+ * Это можно сделать из задачи №5, как промежуточный результат, задачи рисования Л2 отрезка в интерпретации
+ * Функция drawRib
+ */
+function setCircleMirrorByTwoPoints(p1, p2) {
+	var Ax = al[0]["x"][p1];
+	var Ay = al[0]["y"][p1];
+	var Bx = al[0]["x"][p2];
+	var By = al[0]["y"][p2];
+	var lyamdaA = Math.pow(R1, 2) / (Math.pow(Ox1 - Ax, 2) + Math.pow(Oy1 - Ay, 2));
+	var Aix = Ox1 + (Ax - Ox1) * lyamdaA;
+	var Aiy = Oy1 + (Ay - Oy1) * lyamdaA;
+	var lyamdaB = Math.pow(R1, 2) / (Math.pow(Ox1 - Bx, 2) + Math.pow(Oy1 - By, 2));
+	var Bix = Ox1 + (Bx - Ox1) * lyamdaB;
+	var Biy = Oy1 + (By - Oy1) * lyamdaB;
+	var Cax = (Ax + Aix) / 2;
+	var Cay = (Ay + Aiy) / 2;
+	var Cbx = (Bx + Bix) / 2;
+	var Cby = (By + Biy) / 2;
+	var a1 = Ax - Aix;
+	var b1 = Ay - Aiy;
+	var c1 = -a1 * Cax - b1 * Cay;
+	var a2 = Bx - Bix;
+	var b2 = By - Biy;
+	var c2 = -a2 * Cbx - b2 * Cby;
+	Mx = (c1 * b2 / b1 - c2) / (a2 - a1 * b2 / b1);
+	My = (c1 * a2 / a1 - c2) / (b2 - b1 * a2 / a1);
+	MR = Math.sqrt(Math.pow(Ax - Mx, 2) + Math.pow(Ay - My, 2));
 }
