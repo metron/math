@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <time.h>
 
-#define N 14
+#define N 16
 
 main(){
 
