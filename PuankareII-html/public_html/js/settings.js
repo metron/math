@@ -59,3 +59,10 @@ function setLineMirror(Ax, Ay) {
 	MB = Ax - Ox1;
 	MC = -MA * Ax - MB * Ay;
 }
+
+//модуль числа
+function sign(x){
+    if (x > 0) return 1;
+    if (x < 0) return -1;
+    return 0;
+}

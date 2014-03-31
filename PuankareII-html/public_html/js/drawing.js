@@ -41,13 +41,13 @@ function turnAllPoints(angle) {
 		var x = Ax - Ox1;
 		var y = Ay - Oy1;
 		var R = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
-		if (x !== 0) alfa = Math.atan(y / x); else alfa = Math.sign(y) * Math.PI / 2; 
-		if (Math.sign(x) === -1) koef = Math.PI; else koef = 0;
+		if (x !== 0) alfa = Math.atan(y / x); else alfa = sign(y) * Math.PI / 2;
+		if (sign(x) === -1) koef = Math.PI; else koef = 0;
 		var betta = koef + alfa + angle;
 		al[0]["x"][i] = R * Math.cos(betta) + Ox1;
 		al[0]["y"][i] = R * Math.sin(betta) + Oy1;
 		drawPoint(i);//прорисовываем новое положение точки
-		console.log(i);
+		//console.log(i);
 	}
 	drawAllRibs();//прорисовываем все грани
 }
@@ -86,23 +86,39 @@ function drawRib(num) {
 	var c1 = -a1 * Cax - b1 * Cay;
 	var a2 = Bx - Bix;
 	var b2 = By - Biy;
-	var koef = a2/a1 - b2/b1;
 	var c2 = -a2 * Cbx - b2 * Cby;
-	var Ox2 = (c1 * b2 / b1 - c2) / (a2 - a1 * b2 / b1);
-	var Oy2 = (c1 * a2 / a1 - c2) / (b2 - b1 * a2 / a1);
+    var denom_x =  a2 - a1 * b2 / b1;
+    if ( Math.abs(denom_x) < 1e-10 ) {
+        drawSimpleLine(al[1]["p1"][num], al[1]["p2"][num]);
+        return;
+    }
+    var denom_y =  b2 - b1 * a2 / a1;
+    if ( Math.abs(denom_y) < 1e-10 ) {
+        drawSimpleLine(al[1]["p1"][num], al[1]["p2"][num]);
+        return;
+    }
+    var Ox2 = (c1 * b2 / b1 - c2) / denom_x;
+	var Oy2 = (c1 * a2 / a1 - c2) / denom_y;
 	var R2 = Math.sqrt(Math.pow(Ax - Ox2, 2) + Math.pow(Ay - Oy2, 2));
-	sig_x = Math.sign(Ax - Ox2);
-	sig_y = Math.sign(Ay - Oy2);
-	sig_betta = sig_x * sig_y;
-	var alfa = 2 * Math.asin(Math.sqrt(Math.pow(Ax - Bx, 2) + Math.pow(Ay - By, 2)) / (2 * R2));
-	//var alfa = 2 * Math.PI;
-	var betta = sig_y * 2 * Math.asin(Math.sqrt(Math.pow(Ax - Ox2 - R2, 2) + Math.pow(Ay - Oy2, 2)) / (2 * R2));
+    var alfa = 2 * Math.asin(Math.sqrt(Math.pow(Ax - Bx, 2) + Math.pow(Ay - By, 2)) / (2 * R2));
+	var betta = sign(Ay - Oy2) * 2 * Math.asin(Math.sqrt(Math.pow(Ax - Ox2 - R2, 2) + Math.pow(Ay - Oy2, 2)) / (2 * R2));
 
 	//рисуем дугу
 	ris.beginPath();
 	ris.arc(Ox2, Oy2, R2, betta, betta + alfa);
 	ris.stroke();
-	console.log(sig_betta);
+    var arr = [-1, 12, 18, 24, 30, 36, 42, 55];
+    if (arr.join(',').indexOf(","+num+",") >= 0 ) {
+        console.log("<<<", num);
+        //console.log(sign_alfa);
+        console.log(alfa);
+        console.log("R2", R2);
+        console.log("Ax - Ox2", Ax - Ox2);
+        console.log("Ay - Oy2", Ay - Oy2);
+        console.log("Ax - Bx", Ax - Bx);
+        console.log("Ay - By", Ay - By);
+        console.log(">>>");
+    }
 }
 
 //рисуем интерпретацию и оси координат
@@ -142,4 +158,5 @@ function drawSimpleLine(i, j){
 	ris.moveTo(al[0]["x"][i], al[0]["y"][i]);
 	ris.lineTo(al[0]["x"][j], al[0]["y"][j]);
 	ris.stroke();
+    console.log("simple line");
 }

@@ -63,22 +63,12 @@ window.onload = function() {
 		
 		calcCircule2();//вычисляем параметры окружности инверсии и рисуем её
 		beginPoints();//вычисляем координаты начальных точек
-		
-		invEdge(0, 0, newEdge);//отражаем нулевую грань, в нулевом ребре => создаём и рисуем новую грань
-		newEdge++;
-		invEdge(0, 1, newEdge);//отражаем нулевую грань => создаём и рисуем новую грань
-		newEdge++;
-		invEdge(0, 2, newEdge);//отражаем нулевую грань => создаём и рисуем новую грань
-		newEdge++;
-		invEdge(0, 3, newEdge);//отражаем нулевую грань => создаём и рисуем новую грань
-		newEdge++;
-		invEdge(0, 4, newEdge);//отражаем нулевую грань=> создаём и рисуем новую грань
-		newEdge++;
-		invEdge(0, 5, newEdge);//отражаем нулевую грань, в ребре => создаём и рисуем новую грань
-		newEdge++;
-		invEdge(0, 6, newEdge);//отражаем нулевую грань, в ребре => создаём и рисуем новую грань
-		newEdge++;
-		
+
+        for (var i = 0; i < al[2][0].length; i++) {
+            invEdge(0, i, newEdge);//отражаем нулевую грань, в i-м ребре => создаём и рисуем новую грань
+            newEdge++;
+        }
+		console.log("End");
 	});
 };
 
@@ -161,7 +151,7 @@ function beginPoints() {//вычисляет координаты первых 5
 	makeEdge(newEdge);
 	newEdge++;
 	
-	turnAllPoints(Math.PI / 180);
+	turnAllPoints(13 * Math.PI / 180);
 
 	return true;
 }
