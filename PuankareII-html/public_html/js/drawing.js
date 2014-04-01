@@ -1,10 +1,11 @@
 //функция выводит точку с заданным номером на экран
-function drawPoint(num) {
-	ris.fillStyle = colors[al[0]["color"][num]];
-	ris.strokeStyle = colors[al[0]["color"][num]];
+function drawPoint(num, color, radius) {
+    r = radius || 1.5;
+	ris.fillStyle = color || colors[al[0]["color"][num]];
+	ris.strokeStyle = color || colors[al[0]["color"][num]];
 	if (details) ris.fillText(num.toString(), al[0]["x"][num] + 2, al[0]["y"][num] - 2);
 	ris.beginPath();
-	ris.arc(al[0]["x"][num], al[0]["y"][num], 1.5, 0, Math.PI * 2);
+	ris.arc(al[0]["x"][num], al[0]["y"][num], r, 0, Math.PI * 2);
 	ris.closePath();
 	ris.stroke();
 	ris.fill();
@@ -57,10 +58,13 @@ function turnAllPoints(angle) {
  * формулы вычисления дуг и углов даны в задаче №5
  */
 function drawRib(num) {
+    var color = al[0]["color"][al[1]["p2"][num]];
 	var Ax = al[0]["x"][al[1]["p1"][num]];
 	var Ay = al[0]["y"][al[1]["p1"][num]];
 	var Bx = al[0]["x"][al[1]["p2"][num]];
 	var By = al[0]["y"][al[1]["p2"][num]];
+    drawPoint(al[1]["p1"][num], "#ff0000", 3);
+    drawPoint(al[1]["p2"][num], "#ff0000", 3);
 	//console.log((Bx-Ax)*Ox1 + (By-Ay)*Oy1 + (Ax-Bx)*Bx + (Ay-By)*By);
 	if (details) ris.fillText(num.toString(), (Ax+Bx)/2 + 2, (Ay+By)/2 - 2);
 	var lyamdaA = Math.pow(R1, 2) / (Math.pow(Ox1 - Ax, 2) + Math.pow(Oy1 - Ay, 2));
@@ -100,25 +104,24 @@ function drawRib(num) {
     var Ox2 = (c1 * b2 / b1 - c2) / denom_x;
 	var Oy2 = (c1 * a2 / a1 - c2) / denom_y;
 	var R2 = Math.sqrt(Math.pow(Ax - Ox2, 2) + Math.pow(Ay - Oy2, 2));
-    var alfa = 2 * Math.asin(Math.sqrt(Math.pow(Ax - Bx, 2) + Math.pow(Ay - By, 2)) / (2 * R2));
-	var betta = sign(Ay - Oy2) * 2 * Math.asin(Math.sqrt(Math.pow(Ax - Ox2 - R2, 2) + Math.pow(Ay - Oy2, 2)) / (2 * R2));
-
-	//рисуем дугу
-	ris.beginPath();
-	ris.arc(Ox2, Oy2, R2, betta, betta + alfa);
-	ris.stroke();
-    var arr = [-1, 12, 18, 24, 30, 36, 42, 55];
-    if (arr.join(',').indexOf(","+num+",") >= 0 ) {
-        console.log("<<<", num);
-        //console.log(sign_alfa);
-        console.log(alfa);
-        console.log("R2", R2);
-        console.log("Ax - Ox2", Ax - Ox2);
-        console.log("Ay - Oy2", Ay - Oy2);
-        console.log("Ax - Bx", Ax - Bx);
-        console.log("Ay - By", Ay - By);
-        console.log(">>>");
+    var alfa = sign(Ay - Oy2) * 2 * Math.asin(Math.sqrt(Math.pow(Ax - Ox2 - R2, 2) + Math.pow(Ay - Oy2, 2)) / (2 * R2));
+    var betta = sign(By - Oy2) * 2 * Math.asin(Math.sqrt(Math.pow(Bx - Ox2 - R2, 2) + Math.pow(By - Oy2, 2)) / (2 * R2));
+    if (alfa < 0) alfa = alfa + 2 * Math.PI;
+    if (betta < 0) betta = betta + 2 * Math.PI;
+    if (alfa > betta) {
+        var gamma = alfa;
+        alfa = betta;
+        betta = gamma;
     }
+	//рисуем дугу
+    ris.strokeStyle = colors[color];
+    ris.beginPath();
+    if (betta - alfa < Math.PI){
+        ris.arc(Ox2, Oy2, R2, alfa, betta);
+    } else {
+        ris.arc(Ox2, Oy2, R2, betta, alfa);
+    }
+	ris.stroke();
 }
 
 //рисуем интерпретацию и оси координат
