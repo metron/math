@@ -78,34 +78,40 @@ function drawRib(num) {
 	var Cbx = (Bx + Bix) / 2;
 	var Cby = (By + Biy) / 2;
 	var a1 = Ax - Aix;
-	if ( Math.abs(a1) < 1e-10 ) {
-		drawSimpleLine(al[1]["p1"][num], al[1]["p2"][num]);
-		return;
-	}
 	var b1 = Ay - Aiy;
-	if ( Math.abs(b1) < 1e-10 ) {
-		drawSimpleLine(al[1]["p1"][num], al[1]["p2"][num]);
-		return;
-	}
-	var c1 = -a1 * Cax - b1 * Cay;
 	var a2 = Bx - Bix;
 	var b2 = By - Biy;
+	var c1 = -a1 * Cax - b1 * Cay;
 	var c2 = -a2 * Cbx - b2 * Cby;
-    var denom_x =  a2 - a1 * b2 / b1;
-    if ( Math.abs(denom_x) < 1e-10 ) {
-        drawSimpleLine(al[1]["p1"][num], al[1]["p2"][num]);
-        return;
+
+    var Ox2, Oy2, R2;//параметры окружности, дугу которой рисуем
+	if ( Math.abs(a1) < 1e-10 ) {
+        a1 = 0;
+		Oy2 = Cay;
+	}else{
+        var denom_y =  b2 - b1 * a2 / a1;
+        if ( Math.abs(denom_y) < 1e-10 ) {
+            drawSimpleLine(al[1]["p1"][num], al[1]["p2"][num]);
+            return;
+        }else{
+	        Oy2 = (c1 * a2 / a1 - c2) / denom_y;
+        }
     }
-    var denom_y =  b2 - b1 * a2 / a1;
-    if ( Math.abs(denom_y) < 1e-10 ) {
-        drawSimpleLine(al[1]["p1"][num], al[1]["p2"][num]);
-        return;
+
+	if ( Math.abs(b1) < 1e-10 ) {
+        b1 = 0;
+        Ox2 = Cax;
+	}else{
+        var denom_x =  a2 - a1 * b2 / b1;
+        if ( Math.abs(denom_x) < 1e-10 ) {
+            drawSimpleLine(al[1]["p1"][num], al[1]["p2"][num]);
+            return;
+        }
+        Ox2 = (c1 * b2 / b1 - c2) / denom_x;
     }
-    var Ox2 = (c1 * b2 / b1 - c2) / denom_x;
-	var Oy2 = (c1 * a2 / a1 - c2) / denom_y;
-	var R2 = Math.sqrt(Math.pow(Ax - Ox2, 2) + Math.pow(Ay - Oy2, 2));
-    var alfa = sign(Ay - Oy2) * 2 * Math.asin(Math.sqrt(Math.pow(Ax - Ox2 - R2, 2) + Math.pow(Ay - Oy2, 2)) / (2 * R2));
-    var betta = sign(By - Oy2) * 2 * Math.asin(Math.sqrt(Math.pow(Bx - Ox2 - R2, 2) + Math.pow(By - Oy2, 2)) / (2 * R2));
+	R2 = Math.sqrt(Math.pow(Ax - Ox2, 2) + Math.pow(Ay - Oy2, 2));
+    var alfa = sign(Ay - Oy2) * 2 * Math.asin((Math.sqrt(Math.pow(Ax - Ox2 - R2, 2) + Math.pow(Ay - Oy2, 2)) / (2 * R2)).toPrecision(10));
+    var betta = sign(By - Oy2) * 2 * Math.asin((Math.sqrt(Math.pow(Bx - Ox2 - R2, 2) + Math.pow(By - Oy2, 2)) / (2 * R2)).toPrecision(10));
     if (alfa < 0) alfa = alfa + 2 * Math.PI;
     if (betta < 0) betta = betta + 2 * Math.PI;
     if (alfa > betta) {
@@ -122,6 +128,7 @@ function drawRib(num) {
         ris.arc(Ox2, Oy2, R2, betta, alfa);
     }
 	ris.stroke();
+    //console.log("ris");
 }
 
 //рисуем интерпретацию и оси координат
