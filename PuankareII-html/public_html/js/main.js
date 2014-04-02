@@ -41,10 +41,32 @@ newEdge = 0;//индекс в массиве, куда сохранять нов
 
 details = true;//признак того, что нужно выводить центры граней и середину рёбер.
 
-window.onload = function() {
+mouse_x = 0; 
+mouse_y = 0;
+pageOx1 = 0;
+pageOy1 = 0;
 
+window.onload = function() {
+	//определяем центр интерпретации, относительно страницы
+	pageOx1 = Ox1 + $("#disk")[0].offsetLeft;
+	pageOy1 = Oy1 + $("#disk")[0].offsetTop;
+	
+	$("#disk").on("mousedown", function(e){
+		mouse_x = e.pageX;
+		mouse_y = e.pageY;
+		console.log("down");
+		$("#disk").on("mousemove", function(e){
+			console.log(e.clientX, e.clientY);
+		});
+	});
+
+	$("#disk").on("mouseup", function(e){
+		console.log("up");
+		$("#disk").off("mousemove");
+	});
+	
 	//создаём объект canvas
-	drawingCanvas = document.getElementById('smile');
+	drawingCanvas = document.getElementById('disk');
 	if (drawingCanvas && drawingCanvas.getContext) {
 		ris = drawingCanvas.getContext('2d');
 	}

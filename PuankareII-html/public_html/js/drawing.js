@@ -63,8 +63,8 @@ function drawRib(num) {
 	var Ay = al[0]["y"][al[1]["p1"][num]];
 	var Bx = al[0]["x"][al[1]["p2"][num]];
 	var By = al[0]["y"][al[1]["p2"][num]];
-    drawPoint(al[1]["p1"][num], "#ff0000", 3);
-    drawPoint(al[1]["p2"][num], "#ff0000", 3);
+    //drawPoint(al[1]["p1"][num], "#ff0000", 3);
+    //drawPoint(al[1]["p2"][num], "#ff0000", 3);
 	//console.log((Bx-Ax)*Ox1 + (By-Ay)*Oy1 + (Ax-Bx)*Bx + (Ay-By)*By);
 	if (details) ris.fillText(num.toString(), (Ax+Bx)/2 + 2, (Ay+By)/2 - 2);
 	var lyamdaA = Math.pow(R1, 2) / (Math.pow(Ox1 - Ax, 2) + Math.pow(Oy1 - Ay, 2));
@@ -168,5 +168,5 @@ function drawSimpleLine(i, j){
 	ris.moveTo(al[0]["x"][i], al[0]["y"][i]);
 	ris.lineTo(al[0]["x"][j], al[0]["y"][j]);
 	ris.stroke();
-    console.log("simple line");
+    //console.log("simple line");
 }

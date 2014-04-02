@@ -7,9 +7,9 @@ function invEdge(curE, ribNum, newE) {
 	setCircleMirrorByTwoPoints(al[1]["p1"][al[2][curE][ribNum]], al[1]["p2"][al[2][curE][ribNum]]);
 	
 	firstP = newP;//запоминаем первую вершину
-	for (var p = n - 1; p >= 0; p--) {//перебираем начала рёбер текущей грани от нулевой до крайней
-		i = al[2][curE][p];//получаем номер очередного ребра
-		invInCircleMirror(al[1]["p1"][i], newP);//инверсия точки ребра
+	for (var p = n - 1; p >= 0; p--) {//перебираем начала рёбер текущей грани
+		i = al[2][curE][p];//получаем номер очередного ребра.
+		invInCircleMirror(al[1]["p1"][i], newP);//инверсия точки начала ребра
 		//рисуем новую вершину
 		drawPoint(newP);
 		newP++;
